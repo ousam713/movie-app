@@ -3,6 +3,11 @@
 
 @import "tailwindcss";
 
+
+*{
+  max-width: 1200px;
+  margin: auto;
+}
 @theme {
   --color-primary: #030014;
 
