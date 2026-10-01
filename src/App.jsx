@@ -3,7 +3,7 @@ import { useDebounce } from "react-use";
 import Spiner from "./components/spiner";
 import Search from "./components/search";
 import MovieCard from "./components/MovieCard";
-import { updateSearchCount } from "./lib/appwrite";
+import { getTrendingMovies, updateSearchCount } from "./lib/appwrite";
 
 const API_BASE_URL = 'https://api.themoviedb.org/3';
 
@@ -24,8 +24,19 @@ const App = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [movies, setMovies] = useState([]);
     const [debounceSearchTerm, useDebounceSearchTerm] = useState('');
+    const [trendingMovies, settrendingMovies] = useState([]);
 
     useDebounce( () => useDebounceSearchTerm(searchTerm), 750, [searchTerm] );
+
+    const loadtrendingMovies = async () => {
+        try{
+            const movies = await getTrendingMovies();
+
+            settrendingMovies(movies);
+        } catch(err){
+            console.log(`error trending fetching movie: ${err}`)
+        }
+    }
 
     useEffect( () => {
         const fetchMovies = async(query='') => {
@@ -68,6 +79,10 @@ const App = () => {
         fetchMovies(debounceSearchTerm);
     }, [debounceSearchTerm]);
 
+    useEffect( () => {
+        loadtrendingMovies();
+    }, []);
+
     return ( 
         <main>
             <div className="pattern">
@@ -76,12 +91,28 @@ const App = () => {
                     <img src="/hero.png" alt="hero" className="w-128"/>
                     <h1>Find <span className="text-gradient">movies</span> you enjoy without the hassle</h1>
                 </header>
-                
+
                 <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+                
+                { trendingMovies.length > 0 && (
+                    <section className="trending"> 
+                        <h2> Trending movies </h2>
+
+                        <ul>
+                            {trendingMovies.map( (movie, index) => (
+                                <li key={movie.$id}>
+                                    <p>{index + 1}</p>
+                                    <img src={movie.poster_url} alt={movie.searchTerm} />
+                                </li>
+                            ) )}
+                        </ul>
+                    </section>
+                ) }
+                
 
 
                 <section className="all-movies">
-                    <h2>All movies</h2>
+                <h2>All movies</h2>
 
                     {isLoading ? (
                         <Spiner />

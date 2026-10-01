@@ -49,3 +49,21 @@ export const updateSearchCount = async (searchTerm, movie) => {
     console.log(`error updating search count: ${error}`);
   }
 };
+
+export const getTrendingMovies = async () => {
+  try {
+    const result = await tablesDB.listRows({
+      databaseId: DATABASE_ID,
+      tableId: TABLE_ID,
+      queries: [
+        Query.limit(5),
+        Query.orderDesc("count"),
+      ],
+    });
+
+    return result.rows;
+  } catch (error) {
+    console.error(`error fetching trending movies: ${error}`);
+    return [];
+  }
+};
