@@ -3,6 +3,7 @@ import { useDebounce } from "react-use";
 import Spiner from "./components/spiner";
 import Search from "./components/search";
 import MovieCard from "./components/MovieCard";
+import { updateSearchCount } from "./lib/appwrite";
 
 const API_BASE_URL = 'https://api.themoviedb.org/3';
 
@@ -52,6 +53,8 @@ const App = () => {
 
                 setMoviesList(data.results || []);
 
+                updateSearchCount();
+
             }catch(error){
                 console.log(`error fetching movie: ${error}`)
                 setErrorMessage(`Error fetching movies! Please try later.`);
@@ -68,7 +71,7 @@ const App = () => {
             <div className="pattern">
                 <div className="wrapper"></div>
                 <header>
-                    <img src="/hero.png" alt="hero" />
+                    <img src="/hero.png" alt="hero" className="w-128"/>
                     <h1>Find <span className="text-gradient">movies</span> you enjoy without the hassle</h1>
                 </header>
                 
